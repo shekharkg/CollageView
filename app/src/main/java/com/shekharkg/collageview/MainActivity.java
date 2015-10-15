@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     imageView1.setOnTouchListener(new MultiTouchListener());
     imageView3.setOnTouchListener(new MultiTouchListener());
     imageView4.setOnTouchListener(new MultiTouchListener());
-    
+
   }
 
 }
