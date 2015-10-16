@@ -3,10 +3,15 @@ package com.shekharkg.collageview;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+
+import com.shekharkg.collageview.toucher.MultiTouchListener;
+import com.squareup.picasso.Picasso;
+
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -14,11 +19,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
   private static final int SELECT_IMG_2 = 10002;
   private static final int SELECT_IMG_3 = 10003;
   private static final int SELECT_IMG_4 = 10004;
+  private static final int SELECT_FROM_GALLERY = 10005;
+  private static final int SELECT_FROM_CAMERA = 10006;
 
   private ImageView imageView1;
   private ImageView imageView2;
   private ImageView imageView3;
   private ImageView imageView4;
+
+  private int selectedImageView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +44,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     imageView3.setOnClickListener(this);
     imageView4.setOnClickListener(this);
 
-//    imageView2.setOnTouchListener(new MultiTouchListener());
-//    imageView1.setOnTouchListener(new MultiTouchListener());
-//    imageView3.setOnTouchListener(new MultiTouchListener());
-//    imageView4.setOnTouchListener(new MultiTouchListener());
-
   }
 
 
@@ -55,14 +59,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
       showPickerDialog(SELECT_IMG_4);
   }
 
-  private void showPickerDialog(int seletcImageFlag) {
+  private void showPickerDialog(final int selectedImageView) {
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setTitle("Select Image...");
 
     builder.setPositiveButton("Gallery",
         new DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int which) {
-
+            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+            photoPickerIntent.setType("image/*");
+            startActivityForResult(photoPickerIntent, SELECT_FROM_GALLERY);
+            MainActivity.this.selectedImageView = selectedImageView;
           }
         }
     );
@@ -70,7 +77,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     builder.setNegativeButton("Camera",
         new DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int which) {
-
+            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(cameraIntent, SELECT_FROM_CAMERA);
+            MainActivity.this.selectedImageView = selectedImageView;
           }
         }
     );
@@ -79,26 +88,53 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
   }
 
   @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-    if (resultCode == RESULT_OK) {
-      switch (requestCode) {
-        case SELECT_IMG_1:
+  protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+    super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+    if (resultCode != RESULT_OK)
+      return;
 
-          break;
+    boolean isFromCamera = false;
+    if (requestCode == SELECT_FROM_CAMERA) {
+      isFromCamera = true;
+    }
 
-        case SELECT_IMG_2:
-
-          break;
-
-        case SELECT_IMG_3:
-
-          break;
-
-        case SELECT_IMG_4:
-
-          break;
-      }
+    switch (selectedImageView) {
+      case SELECT_IMG_1:
+        if (isFromCamera) {
+          Bitmap photo = (Bitmap) imageReturnedIntent.getExtras().get("data");
+          imageView1.setImageBitmap(photo);
+        } else
+          Picasso.with(MainActivity.this).load(imageReturnedIntent.getData())
+              .placeholder(R.drawable.loading_spinner).into(imageView1);
+        imageView1.setOnTouchListener(new MultiTouchListener());
+        break;
+      case SELECT_IMG_2:
+        if (isFromCamera) {
+          Bitmap photo = (Bitmap) imageReturnedIntent.getExtras().get("data");
+          imageView2.setImageBitmap(photo);
+        } else
+          Picasso.with(MainActivity.this).load(imageReturnedIntent.getData())
+              .placeholder(R.drawable.loading_spinner).into(imageView2);
+        imageView2.setOnTouchListener(new MultiTouchListener());
+        break;
+      case SELECT_IMG_3:
+        if (isFromCamera) {
+          Bitmap photo = (Bitmap) imageReturnedIntent.getExtras().get("data");
+          imageView3.setImageBitmap(photo);
+        } else
+          Picasso.with(MainActivity.this).load(imageReturnedIntent.getData())
+              .placeholder(R.drawable.loading_spinner).into(imageView3);
+        imageView3.setOnTouchListener(new MultiTouchListener());
+        break;
+      case SELECT_IMG_4:
+        if (isFromCamera) {
+          Bitmap photo = (Bitmap) imageReturnedIntent.getExtras().get("data");
+          imageView4.setImageBitmap(photo);
+        } else
+          Picasso.with(MainActivity.this).load(imageReturnedIntent.getData())
+              .placeholder(R.drawable.loading_spinner).into(imageView4);
+        imageView4.setOnTouchListener(new MultiTouchListener());
+        break;
     }
   }
 }
