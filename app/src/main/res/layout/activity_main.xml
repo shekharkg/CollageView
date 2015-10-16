@@ -18,7 +18,7 @@
       android:layout_centerHorizontal="true"
       android:layout_centerVertical="true"
       android:scaleType="fitCenter"
-      android:src="@drawable/daffodils"/>
+      android:src="@drawable/select"/>
   </RelativeLayout>
 
   <View
@@ -43,7 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitCenter"
-        android:src="@drawable/green"/>
+        android:src="@drawable/select"/>
     </RelativeLayout>
 
     <View
@@ -61,7 +61,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitCenter"
-        android:src="@drawable/hawaii"/>
+        android:src="@drawable/select"/>
     </RelativeLayout>
 
   </LinearLayout>
@@ -82,7 +82,7 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:scaleType="fitCenter"
-      android:src="@drawable/sunset"/>
+      android:src="@drawable/select"/>
 
   </RelativeLayout>
 
