@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -13,6 +15,12 @@ import android.widget.ImageView;
 
 import com.shekharkg.collageview.toucher.MultiTouchListener;
 import com.squareup.picasso.Picasso;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Calendar;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -153,7 +161,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
       v1.setDrawingCacheEnabled(true);
       Bitmap bitmap = Bitmap.createBitmap(v1.getDrawingCache());
       v1.setDrawingCacheEnabled(false);
-      imageView1.setImageBitmap(bitmap);
+
+      ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+      bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+      Calendar calendar = Calendar.getInstance();
+      File file = new File(Environment.getExternalStorageDirectory() + File.separator +
+          calendar.getTimeInMillis() + ".png");
+      try {
+        file.createNewFile();
+        FileOutputStream fo = new FileOutputStream(file);
+        fo.write(bytes.toByteArray());
+        fo.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
+      Intent shareIntent = new Intent();
+      shareIntent.setAction(Intent.ACTION_SEND);
+      shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+      shareIntent.setType("image/png");
+
+      startActivity(shareIntent);
+
       return true;
     }
     return super.onOptionsItemSelected(item);
